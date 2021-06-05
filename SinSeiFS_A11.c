@@ -39,9 +39,10 @@ char *atbash(char message[])
 	return cipher;
 }
 
+
 char *process(const char *path){
 	int cek=0;
-	char fpath[1024];
+	//char fpath[1024];
 	//cek apakah folder bernama /AtoZ
 	char *atoz;
 	if(strcmp(path,"/") != 0){
@@ -58,6 +59,7 @@ char *process(const char *path){
     {
         path=dirpath;
         sprintf(fpath,"%s",path);
+		//return fpath;
     } 
 	
     else if (cek){ //ada AtoZ
@@ -81,13 +83,15 @@ char *process(const char *path){
 			//cek file
 		}
 		sprintf(fpath,"%s",newPath);
+		//return fpath;
 	}
 	else sprintf(fpath,"%s%s",dirpath,path);
-
+	
+	return fpath;
 }
 
-void makeLog(char *sys_call, struct data data)
-{
+
+void makeLog(char *sys_call, struct data data){
     // level info buat CREATE/RENAME/SYSCALL LAINNYA SELAIN RMDIR DAN UNLINK warning.
     FILE * LOGFILE = fopen(logPath, "a");
 	time_t now;
@@ -102,8 +106,7 @@ void makeLog(char *sys_call, struct data data)
     return;
 }
 
-static int xmp_getattr(const char *path, struct stat *stbuf)
-{
+static int xmp_getattr(const char *path, struct stat *stbuf){
 	char fpath[1000];
 	strcpy(fpath,path);
 	//comPath(fpath,dirpath,path);
@@ -117,8 +120,7 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 }
 
 // rename nama encode/decode w/ atbash cipher
-static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi)
-{
+static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi){
     char fpath[1000];
 	strcpy(fpath,path);
 	
@@ -179,9 +181,7 @@ static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_
 }
 
 
-static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
-		    struct fuse_file_info *fi)
-{
+static int xmp_read(const char *path, char *buf, size_t size, off_t offset,struct fuse_file_info *fi){
 	char fpath[1024];
 	strcpy(fpath,path);
 	int fd;
@@ -200,8 +200,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	return res;
 }
 
-static int xmp_rename(const char *from, const char *to)
-{
+static int xmp_rename(const char *from, const char *to){
     char fullFrom[1000],fullTo[1000];
     
     if(strcmp(from,"/") == 0)
@@ -238,8 +237,7 @@ static int xmp_rename(const char *from, const char *to)
 	return 0;
 }
 
-static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
-{
+static int xmp_mknod(const char *path, mode_t mode, dev_t rdev){
     char fpath[1000];
     if(strcmp(path,"/") == 0)
 	{
@@ -272,8 +270,7 @@ static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
 }
 
 
-static int xmp_unlink(const char *path)
-{
+static int xmp_unlink(const char *path){
     char fpath[1000];
     char file[100];
 
