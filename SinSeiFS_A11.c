@@ -8,7 +8,14 @@
 #include <errno.h>
 #include <sys/time.h>
 
+struct data{
+    char command[100];
+    char desc[100];
+};
+
 static  const  char *dirpath = "/home/erzajanitra/Downloads";
+static const char *logPath = "/home/erzajanitra/SinSeiFS.log";
+//static const char *logPath = "/home/tsania/SinSeiFS.log";
 //char atz[10]="/AtoZ_";
 
 // Encryption and Decryption function
@@ -77,6 +84,22 @@ char *process(const char *path){
 	}
 	else sprintf(fpath,"%s%s",dirpath,path);
 
+}
+
+void makeLog(char *sys_call, struct data data)
+{
+    // level info buat CREATE/RENAME/SYSCALL LAINNYA SELAIN RMDIR DAN UNLINK warning.
+    FILE * LOGFILE = fopen(logPath, "a");
+	time_t now;
+	time ( &now );
+	struct tm * timeinfo = localtime (&now);
+		if(strcmp(sys_call,"RMDIR")==0 || strcmp(sys_call,"UNLINK")==0){
+			fprintf(LOGFILE, "WARNING::%d%02d%02d-%02d:%02d:%02d:%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, data.command, data.desc);
+		}else{
+			fprintf(LOGFILE, "INFO::%d%02d%02d-%02d:%02d:%02d:%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, data.command, data.desc);
+	    	}
+    fclose(LOGFILE);
+    return;
 }
 
 static int xmp_getattr(const char *path, struct stat *stbuf)
@@ -177,11 +200,113 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	return res;
 }
 
+static int xmp_rename(const char *from, const char *to)
+{
+    char fullFrom[1000],fullTo[1000];
+    
+    if(strcmp(from,"/") == 0)
+	{
+		from=dirpath;
+		sprintf(fullFrom,"%s",from);
+	}
+	else sprintf(fullFrom, "%s%s",dirpath,from);
+
+    if(strcmp(to,"/") == 0)
+	{
+		to=dirpath;
+		sprintf(fullTo,"%s",to);
+	}
+	else sprintf(fullTo, "%s%s",dirpath,to);
+
+    char *oldname = strrchr(fullFrom,'/')+1;
+    char *newname = strrchr(fullTo,'/')+1;
+
+	int res;
+    printf("rename from = %s to = %s\n",fullFrom, fullTo);
+	res = rename(fullFrom, fullTo);
+	if (res == -1)
+		return -errno;
+
+    struct data input_data;
+    strcpy(input_data.command,"RENAME");
+    strcpy(input_data.desc,oldname);
+    strcat(input_data.desc,"::/");
+    strcat(input_data.desc,newname);
+    strcat(input_data.desc,"::/");
+    strcat(input_data.desc,"*/");
+    makeLog("RENAME",input_data);
+	return 0;
+}
+
+static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
+{
+    char fpath[1000];
+    if(strcmp(path,"/") == 0)
+	{
+		path=dirpath;
+		sprintf(fpath,"%s",path);
+	}
+	else sprintf(fpath, "%s%s",dirpath,path);
+
+	int res;
+
+    printf("mknod fpath = %s\n",fpath);
+	/* On Linux this could just be 'mknod(path, mode, rdev)' but this
+	   is more portable */
+	if (S_ISREG(mode)) {
+		res = open(fpath, O_CREAT | O_EXCL | O_WRONLY, mode);
+		if (res >= 0)
+			res = close(res);
+	} else if (S_ISFIFO(mode))
+		res = mkfifo(fpath, mode);
+	else
+		res = mknod(fpath, mode, rdev);
+	if (res == -1)
+		return -errno;
+
+    struct data input_data;
+    strcpy(input_data.command,"CREATE");
+    strcpy(input_data.desc,fpath);
+    makeLog("CREATE",input_data);
+	return 0;
+}
+
+
+static int xmp_unlink(const char *path)
+{
+    char fpath[1000];
+    char file[100];
+
+    if(strcmp(path,"/") == 0)
+	{
+		path=dirpath;
+		sprintf(fpath,"%s",path);
+	}
+	else sprintf(fpath, "%s%s",dirpath,path);
+
+    printf("unlink fpath = %s\n",fpath);
+	int res;
+
+    char *filename = strrchr(fpath,"/")+1;
+
+	res = unlink(fpath);
+	if (res == -1)
+		return -errno;
+
+    struct data data2;
+    strcpy(data2.command,"DELETE");
+    strcpy(data2.desc,filename);
+
+	return 0;
+}
 
 static struct fuse_operations xmp_oper = {
     .getattr = xmp_getattr,
     .readdir = xmp_readdir,
     .read = xmp_read,
+    .unlink = xmp_unlink,
+    .mknod = xmp_mknod,
+    .rename = xmp_rename
 };
 
 int  main(int  argc, char *argv[])
