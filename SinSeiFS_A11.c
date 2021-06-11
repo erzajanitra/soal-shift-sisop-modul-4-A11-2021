@@ -8,8 +8,8 @@
 #include <errno.h>
 #include <sys/time.h>
  
-static  const  char *dirpath = "/home/erzajanitra/Downloads";
-static const char *logPath = "/home/erzajanitra/modul4/SinSeiFS.log";
+static  const  char *dirpath = "/home/tsnzzhr/Downloads";
+static const char *logPath = "/home/tsnzzhr/SinSeiFS.log";
 int cekaz ;
  
 struct data{
