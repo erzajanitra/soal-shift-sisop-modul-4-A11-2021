@@ -105,7 +105,7 @@ _isi folder_<br/>
 ### Kendala yang dialami
 1. Kesulitan untuk mendapatkan path asli pada *getattr* dan *readdir* sehingga fuse tidak berhasil, seperti folder fuse yang kosong atau folder fuse tidak bisa dibuka. Solusinya kami memperbaiki fungsi *prosesPath* kami agar bisa mendapatkan path asli yang benar.
 ### Screenshot Eror
-1. Eror ketika membuka folder fuse <br\>
+1. Eror ketika membuka folder fuse <br/>
 ![messageImage_1622425486034](https://user-images.githubusercontent.com/75319371/121636213-c2bb2980-cab1-11eb-90a3-250d224fb797.jpg)
 
 ## No 4
