@@ -155,3 +155,8 @@ filesystem rancangan Sin dan Sei akan menjadi normal.
 
 ## No 4
 * Fungsi `makeLog` untuk membuat log
+### 4a penyimpanan log terdapat pada `/home/tsania/SinSeiFS.log`
+### 4b format INFO dan WARNING
+### 4c WARNING dioutputkan saat system_call adalah RMDIR dan UNLINK
+### 4d INFO dioutputkan saat system_call selain RMDIR dan UNLINK
+### 4e format baris pada log.
