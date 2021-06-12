@@ -117,7 +117,7 @@ nama isi sesuai kasus nomor 1 dengan algoritma tambahan ROT13 (Atbash + ROT13).
     return false;
 }
 ```
-   Fungsi tersebut digunakan untuk mengecek apakah nama folder terdapat string *RX_*. Apabila benar terdapat string tersebut maka akan melakukan *return* true sehingga bisa melakukan proses encode.
+   Fungsi tersebut digunakan untuk mengecek apakah nama folder terdapat string *RX_*. Apabila benar terdapat string tersebut maka akan melakukan *return* true sehingga bisa melakukan proses encode, seperti pada fungsi `rx_insert` dibawah ini.
  ```
    void rx_insert(char* dir, int chiper){
     sprintf(rx_directory[rx_last_idx].DIR, "%s", dir);
@@ -125,23 +125,23 @@ nama isi sesuai kasus nomor 1 dengan algoritma tambahan ROT13 (Atbash + ROT13).
     rx_last_idx++;
 }
 ```
-  Fungsi tersebut digunakan untuk melakukan encode dengan algoritma tambahan ROT13. Setelah mengecek path, nama file atau folder dalam folder *RX_* akan terencode menggunakan algoritma baru
+  Fungsi tersebut digunakan untuk melakukan encode dengan algoritma tambahan ROT13. Setelah mengecek path, nama file atau folder dalam folder *RX_* akan terencode menggunakan algoritma baru. Fungsi ini menyambungkan path dari foldername/filename yang sudah terencode dengan path dari */home/usr/Downloads* dengan meletakkan pada index terakhir. Pertama akan meng-encode foldername, kemudian meng-encode filename.
   
 ### 2b
 **Soal :** Jika sebuah direktori di-rename dengan awalan “RX_[Nama]”, maka direktori tersebut akan menjadi direktori terencode beserta isinya dengan perubahan
 nama isi sesuai dengan kasus nomor 1 dengan algoritma tambahan Vigenere Cipher dengan key “SISOP” (Case-sensitive, Atbash + Vigenere). <br/>
-* Karena merupakan case-sensitive maka butuh mengecek untuk dua case, yaitu *lowercase* dan *uppercase*. Sehingga string tetap menjadi *lowecase* atau *uppercase*, tidak berubah. Kemudian, mengenkripsi string tersebut dengan viginere cipher yaitu menggunakan metode enkripsi dengan substitusi polialfabetik oleh deretan sandi dari caesar cipher. Pada cara kami menggunakan mod 26 untuk viginere cipher. <br/>
+* Karena merupakan case-sensitive maka butuh mengecek untuk dua case, yaitu *lowercase* dan *uppercase*. Sehingga string tetap menjadi *lowecase* atau *uppercase*, tidak berubah(terganti menjadi *lowercase* atau *uppercase*). Kemudian, mengenkripsi string tersebut dengan atbash + viginere cipher. Viginere cipher adalah metode enkripsi yang  menggunakan metode substitusi polialfabetik oleh deretan sandi dari caesar cipher. Oleh karena itu, pada *for loop* perlu melakukan atbash cipher seperti nomor 1, lalu mengimplementasikan enkripsi vigenere cipher dengan menggunakan mod 26 untuk. <br/>
 
 ### 2c
 **Soal :** Apabila direktori yang terencode di-rename (Dihilangkan “RX_” nya), maka folder menjadi tidak terencode dan isi direktori tersebut akan terdecode berdasar nama
 aslinya.<br/>
-* Mengecek apakah nama direktori tersebut memiliki string *RX_*, jika tidak maka folder dan file didalam direktori tersebut akan terencode kembali secara rekursif. 
+* Mengecek apakah nama direktori tersebut memiliki string *RX_*, jika tidak maka folder dan file didalam direktori tersebut akan terencode kembali secara rekursif. Sama seperti cara nomor 1, pada fungsi `rename` perlu mengecek path asli dengan fungsi *prosesPath* agar path yang diambil benar dan dapat terdecode kembali.
 <br/>
 
 ### 2d
 **Soal :** Setiap pembuatan direktori terencode (mkdir atau rename) akan tercatat ke sebuah log file beserta methodnya (apakah itu mkdir atau rename).
 <br/>
-* Fungsi log file menjadi satu pada fungsi `makeLog` dimana akan dijelaskan pada nomor 4.
+* Fungsi log file kami gabungkan pada fungsi `makeLog` dimana akan dijelaskan pada nomor 4.
 <br/>
 
 ### 2e
@@ -151,12 +151,29 @@ filesystem rancangan Sin dan Sei akan menjadi normal.
 * Metode memecah file-file kecil sebesar 1024 bytes ini terdapat pada fungsi encrypt dan decrypt, baik pada algoritma baru yang ditambah ROT13 dan algoritma baru yang menggunakan case sensitive dan vigenere cipher
 <br/>
 
+### Kendala yang dialami
+1. Kami mengalami kesulitan untuk mengimplementasikan algoritma untuk no 2b karena perlu menggabungkan dua jenis cipher.
+
 ## No 3
+### 3a
+### 3b
+### 3c
+### 3d
+### 3e
+### Kendala yang dialami
 
 ## No 4
-* Fungsi `makeLog` untuk membuat log
 ### 4a penyimpanan log terdapat pada `/home/tsania/SinSeiFS.log`
+* Membuat file SinseiFS.log pada fungsi `makeLog`
+```
+    FILE * LOGFILE = fopen(logPath, "a");
+```
+   File SinSeiFS.log ini dibuat pada */home/tsania/SinseiFS.log* sesuai dengan permintaan soal. Menggunakan fopen dengan command *a* agar string yang dicetak pada file log tersebut terappend dengan string yang sudah tersimpan sebelumnya, sehingga tidak terjadi *write* file. 
+   
 ### 4b format INFO dan WARNING
 ### 4c WARNING dioutputkan saat system_call adalah RMDIR dan UNLINK
 ### 4d INFO dioutputkan saat system_call selain RMDIR dan UNLINK
 ### 4e format baris pada log.
+
+### Kendala yang dialami
+1. Jenis Sys_call yang sedang berjalan tidak bisa muncul pada string yang disimpan pada file log, solusinya nanti tolong tambahin yaa ^^
