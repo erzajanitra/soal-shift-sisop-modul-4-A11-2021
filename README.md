@@ -109,21 +109,47 @@ _isi folder_<br/>
 ### 2a
 **Soal :** Jika sebuah direktori dibuat dengan awalan “RX_[Nama]”, maka direktori tersebut akan menjadi direktori terencode beserta isinya dengan perubahan
 nama isi sesuai kasus nomor 1 dengan algoritma tambahan ROT13 (Atbash + ROT13).
-
+```
+    bool rx_contains(char *dir){
+    for(int i=0; i<rx_last_idx; i++){
+        if(!strcmp(rx_directory[i].DIR, dir)) return true;
+    }
+    return false;
+}
+```
+   Fungsi tersebut digunakan untuk mengecek apakah nama folder terdapat string *RX_*. Apabila benar terdapat string tersebut maka akan melakukan *return* true sehingga bisa melakukan proses encode.
+ ```
+   void rx_insert(char* dir, int chiper){
+    sprintf(rx_directory[rx_last_idx].DIR, "%s", dir);
+    rx_directory[rx_last_idx].CHIPER = chiper;
+    rx_last_idx++;
+}
+```
+  Fungsi tersebut digunakan untuk melakukan encode dengan algoritma tambahan ROT13. Setelah mengecek path, nama file atau folder dalam folder *RX_* akan terencode menggunakan algoritma baru
+  
 ### 2b
 **Soal :** Jika sebuah direktori di-rename dengan awalan “RX_[Nama]”, maka direktori tersebut akan menjadi direktori terencode beserta isinya dengan perubahan
-nama isi sesuai dengan kasus nomor 1 dengan algoritma tambahan Vigenere Cipher dengan key “SISOP” (Case-sensitive, Atbash + Vigenere).
+nama isi sesuai dengan kasus nomor 1 dengan algoritma tambahan Vigenere Cipher dengan key “SISOP” (Case-sensitive, Atbash + Vigenere). <br/>
+* Karena merupakan case-sensitive maka butuh mengecek untuk dua case, yaitu *lowercase* dan *uppercase*. Sehingga string tetap menjadi *lowecase* atau *uppercase*, tidak berubah. Kemudian, mengenkripsi string tersebut dengan viginere cipher yaitu menggunakan metode enkripsi dengan substitusi polialfabetik oleh deretan sandi dari caesar cipher. Pada cara kami menggunakan mod 26 untuk viginere cipher. <br/>
 
 ### 2c
 **Soal :** Apabila direktori yang terencode di-rename (Dihilangkan “RX_” nya), maka folder menjadi tidak terencode dan isi direktori tersebut akan terdecode berdasar nama
-aslinya.
+aslinya.<br/>
+* Mengecek apakah nama direktori tersebut memiliki string *RX_*, jika tidak maka folder dan file didalam direktori tersebut akan terencode kembali secara rekursif. 
+<br/>
 
 ### 2d
 **Soal :** Setiap pembuatan direktori terencode (mkdir atau rename) akan tercatat ke sebuah log file beserta methodnya (apakah itu mkdir atau rename).
+<br/>
+* Fungsi log file menjadi satu pada fungsi `makeLog` dimana akan dijelaskan pada nomor 4.
+<br/>
 
 ### 2e
 **Soal :** Pada metode enkripsi ini, file-file pada direktori asli akan menjadi terpecah menjadi file-file kecil sebesar 1024 bytes, sementara jika diakses melalui
 filesystem rancangan Sin dan Sei akan menjadi normal. 
+<br/>
+* Metode memecah file-file kecil sebesar 1024 bytes ini terdapat pada fungsi encrypt dan decrypt, baik pada algoritma baru yang ditambah ROT13 dan algoritma baru yang menggunakan case sensitive dan vigenere cipher
+<br/>
 
 ## No 3
 
