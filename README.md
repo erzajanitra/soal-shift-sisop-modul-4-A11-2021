@@ -75,11 +75,8 @@ Cara kerja algoritma atbash cipher adalah mencerminkan/membalikkan huruf untuk m
 ```
   Untuk folder, kita bisa langsung melakukan encode nama folder tersebut. Foldername juga perlu di *strcat* dengan path sebelumnya.
   
-* Fungsi untuk membuat log ketika `rename` dan `mkdir`
-``` 
-    kodingan
-```
-Log dibuat untuk mencatat apabila user melakukan `rename` folder dan `mkdir`. Menggunakan mode 1 untuk `rename`, dan mode 2 untuk `mkdir`. Log akan mencatat nama sebelum dan sesudah rename foldername untuk `rename` dan nama folder baru untuk `mkdir`
+* Fungsi untuk membuat log ketika `rename` dan `mkdir`<br/>
+Log dibuat untuk mencatat apabila user melakukan `rename` folder dan `mkdir`, dimana terdapat pada fungsi `makeLog` yang merupakan fungsi yang sama untuk membuat log pada nomor 4. Penjelasan akan diletakkan pada nomor 4.
 
 * Penjelasan `fuse_operations` <br/>
     Menggunakan `readdir`, `read`, dan`readdir` untuk menjalankan fuse. Ketika operasi fuse ini digunakan agar bisa mendapatkan file dan folder dari */home/usr/Downloads* secara rekursif sehingga semua elemen terpindah ke dalam fuse. Sedangkan, `mkdir` untuk membuat directory baru pada folder fuse dan `rename` untuk mengganti nama pada folder fuse.
@@ -108,4 +105,27 @@ _isi folder_<br/>
 1. Eror ketika membuka folder fuse <br/>
 ![messageImage_1622425486034](https://user-images.githubusercontent.com/75319371/121636213-c2bb2980-cab1-11eb-90a3-250d224fb797.jpg)
 
+## No 2
+### 2a
+**Soal :** Jika sebuah direktori dibuat dengan awalan “RX_[Nama]”, maka direktori tersebut akan menjadi direktori terencode beserta isinya dengan perubahan
+nama isi sesuai kasus nomor 1 dengan algoritma tambahan ROT13 (Atbash + ROT13).
+
+### 2b
+**Soal :** Jika sebuah direktori di-rename dengan awalan “RX_[Nama]”, maka direktori tersebut akan menjadi direktori terencode beserta isinya dengan perubahan
+nama isi sesuai dengan kasus nomor 1 dengan algoritma tambahan Vigenere Cipher dengan key “SISOP” (Case-sensitive, Atbash + Vigenere).
+
+### 2c
+**Soal :** Apabila direktori yang terencode di-rename (Dihilangkan “RX_” nya), maka folder menjadi tidak terencode dan isi direktori tersebut akan terdecode berdasar nama
+aslinya.
+
+### 2d
+**Soal :** Setiap pembuatan direktori terencode (mkdir atau rename) akan tercatat ke sebuah log file beserta methodnya (apakah itu mkdir atau rename).
+
+### 2e
+**Soal :** Pada metode enkripsi ini, file-file pada direktori asli akan menjadi terpecah menjadi file-file kecil sebesar 1024 bytes, sementara jika diakses melalui
+filesystem rancangan Sin dan Sei akan menjadi normal. 
+
+## No 3
+
 ## No 4
+* Fungsi `makeLog` untuk membuat log
