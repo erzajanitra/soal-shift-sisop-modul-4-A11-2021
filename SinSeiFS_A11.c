@@ -243,7 +243,34 @@ char* vignereDecrypt(char *str, char *key) {
     str_copy[strlen(str)] = 0;
     return str_copy;
 }
- 
+
+// fungsi encode biner nomor 3
+void encryptBinary(char *filepath){
+	chdir(filepath);
+	DIR *dp;
+	struct dirent *dir;
+	struct stat lol;
+	dp = opendir(".");
+	if(dp == NULL) return;
+	
+	char dirPath[1000];
+	char filePath[1000];
+	char filePathBinary[1000];
+	
+    while ((dir = readdir(dp)) != NULL){
+		if (stat(dir->d_name, &lol) < 0);
+		else if (S_ISDIR(lol.st_mode)){
+			if (strcmp(dir->d_name,".") == 0 || strcmp(dir->d_name,"..") == 0) continue;sprintf(dirPath,"%s/%s",filepath, dir->d_name);encryptBinary(dirPath);
+		}else{
+			sprintf(filePath,"%s/%s",filepath, dir->d_name);
+			char bin[1000], lowercase[1000]; ambilBiner(dir->d_name, bin, lowercase);
+			int dec = bin2dec(bin);
+			sprintf(filePathBinary,"%s/%s.%d",filepath,lowercase,dec); rename(filePath, filePathBinary);
+		}
+	}
+    closedir(dp);
+}
+
 /* XMP Field */
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                off_t offset, struct fuse_file_info *fi)
