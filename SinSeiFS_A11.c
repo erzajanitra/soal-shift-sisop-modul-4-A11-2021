@@ -16,7 +16,16 @@ struct data{
     char path1[100];
     char path2[100];
 };
- 
+
+struct rx {
+    char DIR[SIZE];    
+    int CHIPER;    
+};
+
+struct rx rx_directory[ARR_SIZE];
+int rx_last_idx = 0;
+
+
 char* atbash(char message[]) {
     char msg[1024] ;
     strcpy(msg, message) ;
@@ -165,6 +174,74 @@ char* prosesPath(char* path) {
  
     char* return_fpath = fpath ;
     return return_fpath ;
+}
+
+// fungsi encode dengan viginere cipher
+char *vignereEncrypt(char *str, char *key) {    
+    char *str_copy = malloc((strlen(str)+1) * sizeof(char));
+    sprintf(str_copy, "%s", str);
+    char temp[SIZE]; sprintf(temp, "%s", str);
+
+    int i = 0, curKey = 0;
+    for(i = 0; i < strlen(str_copy); i++) {
+        if(str_copy[i] >= 'a' && str_copy[i] <= 'z') {
+            str_copy[i] = str_copy[i] - 'a' + 'A';
+        }
+    }
+
+    for(int i = 0; i < strlen(str_copy); i++) {
+        if(curKey == strlen(key)) curKey = 0;
+
+        if(str_copy[i] >= 'A' && str_copy[i] <= 'Z')
+            str_copy[i] = ((str_copy[i] + key[curKey]) % 26);
+            
+        if(temp[i] >= 'a' && temp[i] <= 'z')
+            str_copy[i] += 'a';
+        else if(temp[i] >= 'A' && temp[i] <= 'Z')
+            str_copy[i] += 'A';
+        else
+            curKey--;
+        
+        curKey++;
+    }
+
+    str_copy[strlen(str)] = 0;
+    return str_copy;
+}
+char* vignereDecrypt(char *str, char *key) {    
+    char *str_copy = malloc((strlen(str)+1) * sizeof(char));
+    sprintf(str_copy, "%s", str);
+    char temp[SIZE]; sprintf(temp, "%s", str);
+
+    int i = 0, curKey = 0;
+    for(i = 0; i < strlen(str_copy); i++) {
+        if(str_copy[i] >= 'a' && str_copy[i] <= 'z') {
+            str_copy[i] = str_copy[i] - 'a' + 'A';
+        }
+    }
+
+    for(int i = 0; i < strlen(str_copy); i++) {
+        if(curKey == strlen(key)) curKey = 0;
+
+        if(str_copy[i] >= 'A' && str_copy[i] <= 'Z') {
+            str_copy[i] = str_copy[i] - key[curKey];
+
+            if(str_copy[i] < 0)
+                str_copy[i] += 26;
+        }
+
+        if(temp[i] >= 'a' && temp[i] <= 'z')
+            str_copy[i] += 'a';
+        else if(temp[i] >= 'A' && temp[i] <= 'Z')
+            str_copy[i] += 'A';
+        else
+            curKey--;
+        
+        curKey++;
+    }
+
+    str_copy[strlen(str)] = 0;
+    return str_copy;
 }
  
 /* XMP Field */
