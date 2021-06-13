@@ -164,12 +164,12 @@ filesystem rancangan Sin dan Sei akan menjadi normal.
 1. Kami mengalami kesulitan untuk mengimplementasikan algoritma untuk no 2b karena perlu menggabungkan dua jenis cipher.
 
 ## No 3
-### 3a
-### 3b
-### 3c
-### 3d
-### 3e
+* Mengecek apakah nama direktori memiliki awalan *A_is_a_*, jika benar maka direktori tersebut adalah direktori spesial. Untuk membuat direktori spesial yaitu menggunakan *mknod*. Hal ini juga berlaku untuk direktori yang direname menjadi *A_is_a_*, sedangkan apabila nama direktori dikembalikan menjadi tidak memiliki awalan tersebut maka menjadi direktori normal.
+* Direktori spesial adalah semua nama file pada folder fuse akan berubah menjadi lowercase insensitive dan diberi ekstensi baru berupa nilai
+desimal dari binner perbedaan namanya.
+
 ### Kendala yang dialami
+1. Kesulitan dalam menjadikan lowercase insensitive dan mengubah ekstensi dari desimal binner perbedaan namanya.
 
 ## No 4
 ### 4a penyimpanan log terdapat pada `/home/tsania/SinSeiFS.log`
@@ -215,6 +215,8 @@ Level : Level logging, dd : 2 digit tanggal, mm : 2 digit bulan, yyyy : 4 digit 
 
 ### Kendala yang dialami
 1. Jenis Sys_call yang sedang berjalan tidak bisa muncul pada string yang disimpan pada file log. yaitu WARNING. dikarenakan pengaturan path pada UNLINK dan RMDIR masih salah sehingga file atau folder tidak bisa dihapus dan masih belum menemukan solusinya. dengan demikian yang hanya dapat terekam dalam logfile adalah level INFO.
+
+### Screenshot Eror
 ![image](https://user-images.githubusercontent.com/69724694/121797375-ffba2400-cc49-11eb-9260-93ed0e136bae.png)
 
 
