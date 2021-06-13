@@ -168,7 +168,9 @@ filesystem rancangan Sin dan Sei akan menjadi normal.
 ## No 3
 * Mengecek apakah nama direktori memiliki awalan *A_is_a_*, jika benar maka direktori tersebut adalah direktori spesial. Untuk membuat direktori spesial yaitu menggunakan *mknod*. Hal ini juga berlaku untuk direktori yang direname menjadi *A_is_a_*, sedangkan apabila nama direktori dikembalikan menjadi tidak memiliki awalan tersebut maka menjadi direktori normal.
 * Direktori spesial adalah semua nama file pada folder fuse akan berubah menjadi lowercase insensitive dan diberi ekstensi baru berupa nilai
-desimal dari binner perbedaan namanya.
+desimal dari perbedaan biner  namanya.
+* Fungsi `encryptBinary` dan `decryptBinary` digunakan untuk mengencode ekstension setelah mengubah nama file dan folder fuse menjadi lowercase insensitive pada fungsi `ambilBiner`.
+* Fungsi `getDecimal` digunakan untuk mengubah bilangan biner yang telah dicari selisihnya tadi menjadi decimal.
 
 ### Kendala yang dialami
 1. Kesulitan dalam menjadikan lowercase insensitive dan mengubah ekstensi dari desimal binner perbedaan namanya.
