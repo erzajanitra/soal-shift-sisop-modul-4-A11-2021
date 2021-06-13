@@ -168,7 +168,7 @@ filesystem rancangan Sin dan Sei akan menjadi normal.
 ```
     FILE * LOGFILE = fopen(logPath, "a");
 ```
-   File SinSeiFS.log ini dibuat pada */home/tsania/SinseiFS.log* sesuai dengan permintaan soal. Menggunakan fopen dengan command *a* agar string yang dicetak pada file log tersebut terappend dengan string yang sudah tersimpan sebelumnya, sehingga tidak terjadi *write* file. 
+   File SinSeiFS.log ini dibuat pada */home/tsania/SinseiFS.log* sesuai dengan permintaan soal. Menggunakan fopen dengan command *append* agar string yang dicetak pada file log tersebut terappend dengan string yang sudah tersimpan sebelumnya, sehingga tidak terjadi *overwrite* file. 
    
 ### 4b format INFO dan WARNING
 ### 4c WARNING dioutputkan saat system_call adalah RMDIR dan UNLINK
@@ -176,4 +176,7 @@ filesystem rancangan Sin dan Sei akan menjadi normal.
 ### 4e format baris pada log.
 
 ### Kendala yang dialami
-1. Jenis Sys_call yang sedang berjalan tidak bisa muncul pada string yang disimpan pada file log, solusinya nanti tolong tambahin yaa ^^
+1. Jenis Sys_call yang sedang berjalan tidak bisa muncul pada string yang disimpan pada file log. yaitu WARNING. dikarenakan pengaturan path pada UNLINK dan RMDIR masih salah sehingga file atau folder tidak bisa dihapus dan masih belum menemukan solusinya. dengan demikian yang hanya dapat terekam dalam logfile adalah level INFO.
+![image](https://user-images.githubusercontent.com/69724694/121797375-ffba2400-cc49-11eb-9260-93ed0e136bae.png)
+
+
