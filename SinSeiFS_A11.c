@@ -245,6 +245,29 @@ char* vignereDecrypt(char *str, char *key) {
 }
 
 // fungsi encode biner nomor 3
+// ubah jadi lowercase insensitive
+void ambilBiner(char *fname, char *bin, char *lowercase){
+	int idAkhir = extensionId(fname);
+	int idAwal = pemisahId(fname, 0);
+	int i;
+	
+	for(i=idAwal; i<idAkhir; i++){
+		if(isupper(fname[i])){
+			bin[i] = '1';lowercase[i] = fname[i] + 32;
+		}
+		else{
+			bin[i] = '0';lowercase[i] = fname[i];
+		}
+	}
+	bin[idAkhir] = '\0';
+	
+	for(; i<strlen(fname); i++){
+		lowercase[i] = fname[i];
+	}
+	lowercase[i] = '\0';
+}
+
+//encrypyt binary no 3
 void encryptBinary(char *filepath){
 	chdir(filepath);
 	DIR *dp;
@@ -269,6 +292,56 @@ void encryptBinary(char *filepath){
 		}
 	}
     closedir(dp);
+}
+// decrypt binary no 3
+void decryptBinary(char *filepath){
+	chdir(filepath);
+	DIR *dp;
+	struct dirent *dir;
+	struct stat lol;
+	dp = opendir(".");
+	if(dp == NULL) return;
+	
+	char dirPath[1000];
+	char filePath[1000];
+	char filePathDecimal[1000];
+	
+    while ((dir = readdir(dp)) != NULL){
+		if (stat(dir->d_name, &lol) < 0);
+		else if (S_ISDIR(lol.st_mode)){
+			if (strcmp(dir->d_name,".") == 0 || strcmp(dir->d_name,"..") == 0) continue;sprintf(dirPath,"%s/%s",filepath, dir->d_name);decryptBinary(dirPath);
+		}
+		else{
+			sprintf(filePath,"%s/%s",filepath, dir->d_name);
+			char fname[1000], bin[1000], normalcase[1000], clearPath[1000];
+			
+			strcpy(fname, dir->d_name);
+			char *ext = strrchr(fname, '.');
+			int dec = convertDec(ext+1);
+			for(int i=0; i<strlen(fname)-strlen(ext); i++) clearPath[i] = fname[i];
+			
+			char *ext2 = strrchr(clearPath, '.');
+			dec2bin(dec, bin, strlen(clearPath)-strlen(ext2));getDecimal(clearPath, bin, normalcase);sprintf(filePathDecimal,"%s/%s",filepath,normalcase);rename(filePath, filePathDecimal);
+		}
+	}
+    closedir(dp);
+}
+
+//ubah menjadi desimal
+void getDecimal(char *fname, char *bin, char *normalcase){
+	int idAkhir = extensionId(fname);
+	int idAwal = pemisahId(fname, 0);
+	int i;
+	
+	for(i=idAwal; i<idAkhir; i++){
+		if(bin[i-idAwal] == '1') normalcase[i-idAwal] = fname[i] - 32;
+		else normalcase[i-idAwal] = fname[i];
+	}
+	
+	for(; i<strlen(fname); i++){
+		normalcase[i-idAwal] = fname[i];
+	}
+	normalcase[i-idAwal] = '\0';
 }
 
 /* XMP Field */
