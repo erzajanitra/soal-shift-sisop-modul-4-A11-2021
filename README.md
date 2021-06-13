@@ -171,9 +171,38 @@ filesystem rancangan Sin dan Sei akan menjadi normal.
    File SinSeiFS.log ini dibuat pada */home/tsania/SinseiFS.log* sesuai dengan permintaan soal. Menggunakan fopen dengan command *append* agar string yang dicetak pada file log tersebut terappend dengan string yang sudah tersimpan sebelumnya, sehingga tidak terjadi *overwrite* file. 
    
 ### 4b format INFO dan WARNING
+* Membuat format info dan warning fungsi `makeLog`
+```
+}else if(strcmp(sys_call,"RMDIR")==0 || strcmp(sys_call,"UNLINK")==0){
+        fprintf(LOGFILE4, "WARNING::%d%02d%02d-%02d:%02d:%02d:%s::/%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, sys_call, data.path1, data.path2);
+    }else{
+        fprintf(LOGFILE4, "INFO::%d%02d%02d-%02d:%02d:%02d:%s::/%s::%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, sys_call, data.path1, data.path2);
+    }
+```
+   fungsi makeLog yang dibuat disengaja dibuat bersamaan dengan log nomor 1. sehingga percabangannya lebih banyak dan lebih spesifik. format sudah sesuai dengan permintaan soal dimana timestamp harus mengoutputkan 2 digit pada bagian tanggal dan waktunya. kemudian diikuti jenis sys_call dan detail perubahannya. 
+    
 ### 4c WARNING dioutputkan saat system_call adalah RMDIR dan UNLINK
+*  WARNING hanya dioutputkan ketika terjadi UNLINK atau RMDIR.
+```
+else if(strcmp(sys_call,"RMDIR")==0 || strcmp(sys_call,"UNLINK")==0){
+        fprintf(LOGFILE4, "WARNING::%d%02d%02d-%02d:%02d:%02d:%s::/%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, sys_call, data.path1, data.path2);
+    }
+```
 ### 4d INFO dioutputkan saat system_call selain RMDIR dan UNLINK
+*  WARNING hanya dioutputkan selain ketika UNLINK atau RMDIR pada source code dibawah diambil sebagai contoh MKDIR dan RENAME.
+```
+  if(strcmp(sys_call,"RENAME")==0){
+        fprintf(LOGFILE4, "INFO::%d%02d%02d-%02d:%02d:%02d:%s::/%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, sys_call, data.path1, data.path2);
+        fprintf(LOGFILE1, "%s : %s -> %s\n", sys_call, data.path1, data.path2);	
+    }else if(strcmp(sys_call,"MKDIR")==0 ){
+    	fprintf(LOGFILE1, "%s : %s\n", sys_call, data.path1);
+        fprintf(LOGFILE4, "INFO::%d%02d%02d-%02d:%02d:%02d:%s::/%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, sys_call, data.path1, data.path2);
+    }
+```
 ### 4e format baris pada log.
+
+Level : Level logging, dd : 2 digit tanggal, mm : 2 digit bulan, yyyy : 4 digit tahun, HH : 2 digit jam (format 24 Jam),MM : 2 digit menit, SS : 2 digit detik, CMD : System Call yang terpanggil, DESC : informasi dan parameter tambahan. Seperti yang dapat dilihat pada gambar :
+![image](https://user-images.githubusercontent.com/69724694/121797375-ffba2400-cc49-11eb-9260-93ed0e136bae.png)
 
 ### Kendala yang dialami
 1. Jenis Sys_call yang sedang berjalan tidak bisa muncul pada string yang disimpan pada file log. yaitu WARNING. dikarenakan pengaturan path pada UNLINK dan RMDIR masih salah sehingga file atau folder tidak bisa dihapus dan masih belum menemukan solusinya. dengan demikian yang hanya dapat terekam dalam logfile adalah level INFO.
