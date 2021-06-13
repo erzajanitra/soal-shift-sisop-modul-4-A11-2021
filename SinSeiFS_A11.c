@@ -8,13 +8,13 @@
 #include <errno.h>
 #include <sys/time.h>
  
-static  const  char *dirpath = "/home/tsnzzhr/Downloads";
-static const char *logPath = "/home/tsnzzhr/SinSeiFS.log";
-int cekaz ;
+static  const  char *dirpath = "/home/tsania/Downloads";
+static const char *lognomer4 = "/home/tsania/SinSeiFS.log";
+static const char *lognomer1 = "/home/tsania/Documents/sisopshift4/log1.log";
  
 struct data{
-    char command[100];
-    char desc[100];
+    char path1[100];
+    char path2[100];
 };
  
 char* atbash(char message[]) {
@@ -35,17 +35,25 @@ char* atbash(char message[]) {
  
 // Bikin log
 void makeLog(char *sys_call, struct data data){
-    // level info buat CREATE/RENAME/SYSCALL LAINNYA SELAIN RMDIR DAN UNLINK warning.
-    FILE * LOGFILE = fopen(logPath, "a");
+    FILE * LOGFILE1 = fopen(lognomer1, "a");
+    FILE * LOGFILE4 = fopen(lognomer4,"a");
 	time_t now;
 	time ( &now );
 	struct tm * timeinfo = localtime (&now);
-		if(strcmp(sys_call,"RMDIR")==0 || strcmp(sys_call,"UNLINK")==0){
-			fprintf(LOGFILE, "WARNING::%d%02d%02d-%02d:%02d:%02d:%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, data.command, data.desc);
-		}else{
-			fprintf(LOGFILE, "INFO::%d%02d%02d-%02d:%02d:%02d:%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, data.command, data.desc);
-	    	}
-    fclose(LOGFILE);
+	
+    if(strcmp(sys_call,"RENAME")==0){
+        fprintf(LOGFILE4, "INFO::%d%02d%02d-%02d:%02d:%02d:%s::/%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, sys_call, data.path1, data.path2);
+        fprintf(LOGFILE1, "%s : %s -> %s\n", sys_call, data.path1, data.path2);	
+    }else if(strcmp(sys_call,"MKDIR")==0 ){
+    	fprintf(LOGFILE1, "%s : %s\n", sys_call, data.path1);
+        fprintf(LOGFILE4, "INFO::%d%02d%02d-%02d:%02d:%02d:%s::/%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, sys_call, data.path1, data.path2);
+    }else if(strcmp(sys_call,"RMDIR")==0 || strcmp(sys_call,"UNLINK")==0){
+        fprintf(LOGFILE4, "WARNING::%d%02d%02d-%02d:%02d:%02d:%s::/%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, sys_call, data.path1, data.path2);
+    }else{
+        fprintf(LOGFILE4, "INFO::%d%02d%02d-%02d:%02d:%02d:%s::/%s::%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, sys_call, data.path1, data.path2);
+    }
+    fclose(LOGFILE1);
+    fclose(LOGFILE4);
     return;
 }
  
@@ -263,6 +271,7 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
     return 0;
 }
  
+
 static int xmp_rename(const char *from, const char *to){
     char fullFrom[1000],fullTo[1000];
  
@@ -290,23 +299,22 @@ static int xmp_rename(const char *from, const char *to){
 		return -errno;
  
     struct data input_data;
-    strcpy(input_data.command,"RENAME");
-    strcpy(input_data.desc,oldname);
-    strcat(input_data.desc,"::/");
-    strcat(input_data.desc,newname);
-    strcat(input_data.desc,"::/");
-    strcat(input_data.desc,"*/");
+    strcpy(input_data.path1,fullFrom);
+    strcpy(input_data.path2,fullTo);
+
     makeLog("RENAME",input_data);
 	return 0;
 }
+ 
  
 static int xmp_mkdir(const char *path, mode_t mode)
 {
     char* lastSlash = strchr(path, '/') ;
     if (strstr(lastSlash, "/AtoZ_")) {
-        char temp[1024] ; bzero(temp, 1024) ;
-        sprintf(temp, "%s%s", dirpath, path) ;
-        //makeLog("gapenting", temp, 2) ;
+        struct data inputdata;
+        sprintf(inputdata.path1, "%s%s", dirpath, path);
+        sprintf(inputdata.path2,NULL);
+        makeLog("MKDIR", inputdata);
     }
  
     char fpath[1024] ;
@@ -317,9 +325,14 @@ static int xmp_mkdir(const char *path, mode_t mode)
     res = mkdir(fpath, mode);
     if (res == -1)
         return -errno;
- 
+
+    struct data inputdata;
+    sprintf(inputdata.path1, "%s",fpath) ;
+    sprintf(inputdata.path2,NULL);
+    makeLog("MKDIR", inputdata);
     return 0;
 }
+ 
  
 static int xmp_mknod(const char *path, mode_t mode, dev_t rdev){
     char fpath[1000];
@@ -347,25 +360,33 @@ static int xmp_mknod(const char *path, mode_t mode, dev_t rdev){
 		return -errno;
  
     struct data input_data;
-    strcpy(input_data.command,"CREATE");
+    strcpy(input_data.command,"MKNOD");
     strcpy(input_data.desc,fpath);
-    makeLog("CREATE",input_data);
+    makeLog("MKNOD",input_data);
 	return 0;
 }
  
  
+
+ 
 static int xmp_unlink(const char *path){
-    char fpath[1000];
+
     char file[100];
- 
-    if(strcmp(path,"/") == 0)
-	{
-		path=dirpath;
-		sprintf(fpath,"%s",path);
-	}
-	else sprintf(fpath, "%s%s",dirpath,path);
- 
-    printf("unlink fpath = %s\n",fpath);
+    char fpath[1024] ;
+
+    
+    	
+    if (strcmp(path, "/") == 0){
+        path = dirpath;
+        sprintf(fpath, "%s", path);
+    }else{
+        sprintf(fpath, "%s%s", dirpath, path);
+        char* lastSlash = strchr(path, '/') ;
+        if (strstr(lastSlash, "/AtoZ_")) {
+           sprintf(fpath,"%s",prosesPath(path));
+        }
+    }
+
 	int res;
  
     char *filename = strrchr(fpath,"/")+1;
@@ -375,11 +396,13 @@ static int xmp_unlink(const char *path){
 		return -errno;
  
     struct data data2;
-    strcpy(data2.command,"DELETE");
-    strcpy(data2.desc,filename);
- 
+    strcpy(data2.path1,fpath);
+    strcpy(data2.path2,NULL);
+    makeLog("UNLINK",data2);
 	return 0;
 }
+ 
+ 
  
  
  
