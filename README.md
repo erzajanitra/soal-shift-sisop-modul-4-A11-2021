@@ -108,6 +108,8 @@ _isi folder_<br/>
     }
 ```
   penyimpanan informasi log ada pada LOGFILE1 dengan format jika RENAME maka `oldname -> newname` dan jika MKDIR maka format hanya `newname`
+![image](https://user-images.githubusercontent.com/69724694/121800262-1cab2300-cc5b-11eb-82cd-38687c5d414f.png)
+
 ### Kendala yang dialami
 1. Kesulitan untuk mendapatkan path asli pada *getattr* dan *readdir* sehingga fuse tidak berhasil, seperti folder fuse yang kosong atau folder fuse tidak bisa dibuka. Solusinya kami memperbaiki fungsi *prosesPath* kami agar bisa mendapatkan path asli yang benar.
 ### Screenshot Eror
