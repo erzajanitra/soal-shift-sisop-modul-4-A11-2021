@@ -98,7 +98,16 @@ _setelah direname menjadi tidak ter-encode_<br/>
 _isi folder_<br/>
 ![image](https://user-images.githubusercontent.com/75319371/121635305-352b0a00-cab0-11eb-82b3-752b49e817a6.png) <br/>
 4. **1d** Setiap pembuatan direktori ter-encode (mkdir atau rename) akan tercatat ke sebuah log.
-
+```
+ if(strcmp(sys_call,"RENAME")==0){
+        fprintf(LOGFILE4, "INFO::%d%02d%02d-%02d:%02d:%02d:%s::/%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, sys_call, data.path1, data.path2);
+        fprintf(LOGFILE1, "%s : %s -> %s\n", sys_call, data.path1, data.path2);	
+    }else if(strcmp(sys_call,"MKDIR")==0 ){
+    	fprintf(LOGFILE1, "%s : %s\n", sys_call, data.path1);
+        fprintf(LOGFILE4, "INFO::%d%02d%02d-%02d:%02d:%02d:%s::/%s::/%s\n",timeinfo->tm_mday, timeinfo->tm_mon+1, timeinfo->tm_year+1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, sys_call, data.path1, data.path2);
+    }
+```
+  penyimpanan informasi log ada pada LOGFILE1 dengan format jika RENAME maka `oldname -> newname` dan jika MKDIR maka format hanya `newname`
 ### Kendala yang dialami
 1. Kesulitan untuk mendapatkan path asli pada *getattr* dan *readdir* sehingga fuse tidak berhasil, seperti folder fuse yang kosong atau folder fuse tidak bisa dibuka. Solusinya kami memperbaiki fungsi *prosesPath* kami agar bisa mendapatkan path asli yang benar.
 ### Screenshot Eror
